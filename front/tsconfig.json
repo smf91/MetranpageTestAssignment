@@ -10,6 +10,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "strictPropertyInitialization": false,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
@@ -19,10 +20,14 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2022",
-      "dom"
-    ]
+    "lib": ["ES2022", "dom"],
+    "paths": {
+      "@domains/*": ["./src/app/domains/*"],
+      "@shared/*": ["./src/app/shared/*"],
+      "@kernel/*": ["./src/app/kernel/*"],
+      "@pages/*": ["./src/app/pages/*"],
+      "@src/*": ["./src/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

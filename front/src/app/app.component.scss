@@ -1,6 +1,6 @@
-.project {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  margin: 64px;
+.main-wrapper{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0 2rem;
 }

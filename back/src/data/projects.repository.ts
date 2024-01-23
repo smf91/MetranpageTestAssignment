@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { Project } from "./models";
+import { Injectable } from '@nestjs/common';
+import { Project } from 'src/book-builder/book-builder.model';
 
 @Injectable()
 export class ProjectsRepository {

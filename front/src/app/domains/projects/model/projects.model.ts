@@ -2,16 +2,13 @@ export type Project = {
   id: number;
 };
 
-export type Template = {
-  id: number;
-  arg1: string;
-  arg2: string;
-};
-
 export type ProjectResponse = {
   projects: Project[];
 };
 
-export type BuildResponse = {
+//TODO: ProjectData should be renamed
+export type ProjectData = {
+  project: Project;
   buildedProject: string;
-}
+  error: string;
+};
