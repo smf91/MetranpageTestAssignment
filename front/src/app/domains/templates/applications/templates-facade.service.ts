@@ -12,7 +12,9 @@ export class TemplatesFacadeService {
 
   constructor(private readonly _templatesApi: TemplateApiService) {}
 
-  getTemplates$(): Observable<Template[]> {
-    return this._templatesApi.getTemplates().pipe(map((res) => res.templates));
+  getTemplates$(searhString: string): Observable<Template[]> {
+    return this._templatesApi
+      .getTemplates$(searhString)
+      .pipe(map((res) => res.templates));
   }
 }

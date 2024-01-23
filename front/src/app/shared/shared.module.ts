@@ -1,12 +1,16 @@
 import { NgModule } from '@angular/core';
 import { ComponentsModule } from './components/components.module';
-import { LetDirective } from '@kernel/directive';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-const modules = [ComponentsModule, CommonModule];
+const modules = [
+  ComponentsModule,
+  CommonModule,
+  ReactiveFormsModule,
+  FormsModule,
+];
 
 @NgModule({
-  declarations: [LetDirective],
   imports: modules,
   exports: [...modules],
 })

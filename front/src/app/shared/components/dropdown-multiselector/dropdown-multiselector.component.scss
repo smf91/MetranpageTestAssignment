@@ -37,7 +37,10 @@
       left: 0;
       height: 10rem;
       overflow: auto;
-      background-color: #fff;
+      background-color: #ffff;
+      border: 1px solid #dfe6ec;
+      z-index: 100;
+
     }
     &__item {
       padding: 0 5px;

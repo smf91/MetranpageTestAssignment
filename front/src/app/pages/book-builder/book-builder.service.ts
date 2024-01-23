@@ -3,13 +3,10 @@ import { Observable, map } from 'rxjs';
 import { BookBuilderApiService } from './book-builder.api';
 import { ProjectData, ProjectsFacadeService } from 'src/app/domains/projects';
 import { filterNil } from '@kernel/pipes';
+import { Template, TemplatesFacadeService } from '@domains/templates';
 
 @Injectable()
 export class BookBuilderService {
-  // private readonly _projects$: BehaviorSubject<any[] | null> =
-  //   new BehaviorSubject<any[] | null>(null);
-  // readonly projects$: Observable<any[] | null> = this._projects$.asObservable();
-
   //TODO processedProjects should be renamed!
   readonly processedProjects$: Observable<ProjectData[]> =
     this._projectsFacade.projects$.pipe(
@@ -26,16 +23,15 @@ export class BookBuilderService {
 
   constructor(
     private readonly _projectsFacade: ProjectsFacadeService,
-    private readonly _templatesFacade: BookBuilderApiService,
+    private readonly _templatesFacade: TemplatesFacadeService,
     private readonly _bookBuilderApi: BookBuilderApiService
   ) {}
 
-  //   getProjects$(): Observable<Project[]> {
-  //     return this._bookBuilderApi.getProjects().pipe(map((res) => res.projects));
-  //   }
+  getTemplates$(searhString: string): Observable<Template[]> {
+    return this._templatesFacade.getTemplates$(searhString);
+  }
 
-  //   getTemplates$(): Observable<Template[]> {
-  //     return this._bookBuilderApi.getTemplates().pipe(map((res) => res.templates));
-  //   }
-  // }
+  buildSomething(): void {
+    this._bookBuilderApi;
+  }
 }

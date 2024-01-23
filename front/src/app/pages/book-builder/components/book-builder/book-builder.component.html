@@ -1,28 +1,42 @@
-<!-- <div *ngFor="let project of projects" class="project">
-  Проект - id: {{project.project.id}}
-  <button (click)="buildProject(project.project.id)">Собрать</button>
-  <div *ngIf="project.buildedProject">
-    Собранный проект: {{project.buildedProject}}
+<ng-container *ngIf="bookBuilderForm; else spinner" >
+  <form class="form" [formGroup]="bookBuilderForm">
+    <h1>Список проектов:</h1>
+    <div formArrayName="projects" *ngIf="projects$ | async as projects" class="projects">
+      <ng-container *ngFor="let project of projects; let i = index" [formGroupName]="i">
+        <ng-container *ngTemplateOutlet="SomeTmpl; context: { project, i }"> </ng-container>
+      </ng-container>
+    </div>
+  </form>
+</ng-container>
+
+
+<!-- TEMPLATES -->
+<ng-template #SomeTmpl let-p="project" let-i="i">
+  <div class="projects__item">
+    <span>Проект - id: {{ p.project.id }}</span>
+    <app-dropdown-multiselector 
+      [formControl]="bookBuilderForm.controls.projects.controls[i].controls.template"
+      optionLabel="template" 
+      placeholder="serch template"
+      (onFilterEvent)="onCustomFilterEvent($event)"
+      [options]="(templatesSource$ | async)!"
+      optionLabel="id"
+      optionValue="false"
+      >
+    </app-dropdown-multiselector>
+    <button (click)="buildProject(p.project.id)">Собрать</button>
+  
+    <div *ngIf="p.buildedProject">
+      Собранный проект: {{p.buildedProject}}
+    </div>
+  
+    <div *ngIf="p.error">
+      Ошибка: {{p.error}}
+    </div>
+
   </div>
-  <div *ngIf="project.error">
-    Ошибка: {{project.error}}
-  </div>
-</div> -->
+</ng-template>
 
-
-
-
-<div class="book-builder">
-  <h1>Список проектов:</h1>
-  <div *ngIf="projects$ | async as data">
-    dsdsdsd
-    <pre>{{data | json}}</pre>
-  </div>
-  <!-- <div *ngFor="let project of (projects$ | async)" class="project">
-    Lorem ipsum dolor sit amet.
-  </div> -->
-
-  <!-- <app-dropdown-multiselector></app-dropdown-multiselector> -->
-</div>
-
-
+<ng-template #spinner>
+  <span>LOADING...</span>
+</ng-template>
