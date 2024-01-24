@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { BookBuilderApiService } from './book-builder.api';
 import { ProjectData, ProjectsFacadeService } from 'src/app/domains/projects';
 import { filterNil } from '@kernel/pipes';
 import { Template, TemplatesFacadeService } from '@domains/templates';
+import {
+  BookBuilderApiService,
+  BuildRequest,
+  BuildResponse,
+} from '@domains/book-builder';
 
+//TODO возможно логику стоит вытащить в отдельный фасад
 @Injectable()
 export class BookBuilderService {
   //TODO processedProjects should be renamed!
@@ -19,7 +24,6 @@ export class BookBuilderService {
         }))
       )
     );
-  // readonly templates$: Observable<any[] | null> = this._templatesFacade;
 
   constructor(
     private readonly _projectsFacade: ProjectsFacadeService,
@@ -31,7 +35,7 @@ export class BookBuilderService {
     return this._templatesFacade.getTemplates$(searhString);
   }
 
-  buildSomething(): void {
-    this._bookBuilderApi;
+  buildProject$(payload: BuildRequest): Observable<BuildResponse> {
+    return this._bookBuilderApi.buildProject(payload);
   }
 }

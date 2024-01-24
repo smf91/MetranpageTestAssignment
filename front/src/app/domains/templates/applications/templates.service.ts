@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { TemplateApiService } from '../api';
 import { Template } from '../model';
+import { TemplateApiService } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class TemplatesFacadeService {

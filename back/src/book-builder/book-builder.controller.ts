@@ -1,11 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { BookBuilderService } from './book-builder.service';
+import { Observable } from 'rxjs';
+import { BuildRequest, BuildResponse, TemplateResponse } from './sheme.dto';
 
-type BuildRequest = {
-  id: number;
-  // TODO templateId
-};
-
+//TODO вынести роуты в константу с путями и типизировать
 @Controller('book-builder')
 export class BookBuilderController {
   constructor(private readonly _bookBuilderService: BookBuilderService) {}
@@ -16,12 +14,12 @@ export class BookBuilderController {
   }
 
   @Get('templates')
-  getTemplates() {
-    return this._bookBuilderService.getTemplates();
+  getTemplates(@Query('search') searchString: string): TemplateResponse {
+    return { templates: this._bookBuilderService.getTemplates(searchString) };
   }
 
   @Post('build')
-  buildProject(@Body() request: BuildRequest) {
-    return this._bookBuilderService.buildProject(request.id);
+  buildProject(@Body() request: BuildRequest): Observable<BuildResponse> {
+    return this._bookBuilderService.buildProject(request);
   }
 }

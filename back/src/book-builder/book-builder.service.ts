@@ -1,51 +1,66 @@
 import { Injectable } from '@nestjs/common';
 import { ProjectsRepository } from '../data/projects.repository';
 import { TemplatesRepository } from '../data/templates.repository';
-import { firstValueFrom } from 'rxjs';
+import {
+  map,
+  firstValueFrom,
+  from,
+  of,
+  combineLatestWith,
+  catchError,
+  throwError,
+  Observable,
+} from 'rxjs';
 import { HttpService } from '@nestjs/axios';
-
-type WorkerResponse = {
-  success: boolean;
-  error?: string;
-  buildedProject?: string;
-};
+import { Template } from './book-builder.model';
+import { filterNil } from '../kernel/pipes';
+import { BuildRequest, BuildResponse, WorkerResponse } from './sheme.dto';
 
 @Injectable()
+//TODO типизировать все методы и пр
 export class BookBuilderService {
-  private readonly workerUrl: string;
+  private readonly _workerUrl: string;
 
   constructor(
-    private readonly projectsRepository: ProjectsRepository,
-    private readonly templatesRepository: TemplatesRepository,
-    private readonly httpService: HttpService,
+    private readonly _projectsRepository: ProjectsRepository,
+    private readonly _templatesRepository: TemplatesRepository,
+    private readonly _httpService: HttpService,
   ) {
-    this.workerUrl = process.env.WORKER_URL;
+    this._workerUrl = process.env.WORKER_URL;
   }
 
-  getProjects() {
-    return {
-      projects: this.projectsRepository.getList(),
-    };
+  getProjects(): ProjectResponse {
+    return { projects: this._projectsRepository.getList() };
   }
 
-  getTemplates() {
-    return {
-      templates: this.templatesRepository.getList(),
-    };
+  getTemplates(searchString: string): Template[] {
+    return this._templatesRepository
+      .getList()
+      .filter((t) =>
+        t.id.toString().toLocaleLowerCase().includes(searchString),
+      );
   }
 
-  async buildProject(id: number) {
-    // TODO actually, there should be queue scheduling, at actual project RabbitMQ is used
-    const response = await this.makeRequest(`${this.workerUrl}/build`, { id });
-
-    if (response) {
-      const processedData = response.buildedProject!;
-      return {
-        buildedProject: `Additionally proccessed data from worker: ${processedData}`,
-      };
-    } else {
-      throw new Error('Something went wrong');
-    }
+  buildProject(payload: BuildRequest): Observable<BuildResponse> {
+    const { id, templateId } = payload;
+    const response = this.makeRequest(`${this._workerUrl}/build`, {
+      id,
+    });
+    return from(response).pipe(
+      filterNil(),
+      combineLatestWith(of(this.getTemplates(templateId.toString()))),
+      map(([workerResponse, template]) => {
+        //TODO  логику ниже вытащить в отдельый метод и отрефакторить
+        const { arg1, arg2 } = template[0];
+        return {
+          buildedProject: `Additionally proccessed data from worker: ${workerResponse['buildedProject']} Template args: arg1=${arg1} arg2=${arg2}`,
+        };
+      }),
+      catchError((err) => {
+        console.error(`Something went wrong: ${err}`);
+        return throwError(() => err);
+      }),
+    );
   }
 
   async makeRequest(
@@ -56,7 +71,7 @@ export class BookBuilderService {
       throw new Error('No url');
     }
     return firstValueFrom(
-      this.httpService.post(url, {
+      this._httpService.post(url, {
         ...body,
       }),
     )
@@ -71,7 +86,6 @@ export class BookBuilderService {
       .catch((error) => {
         console.error(`Cannot make request ${url}:`);
         console.error(error);
-
         return false;
       });
   }

@@ -1,1 +1,1 @@
-export * from './templates-facade.service';
+export * from './templates.service';

@@ -3,7 +3,7 @@
     <h1>Список проектов:</h1>
     <div formArrayName="projects" *ngIf="projects$ | async as projects" class="projects">
       <ng-container *ngFor="let project of projects; let i = index" [formGroupName]="i">
-        <ng-container *ngTemplateOutlet="SomeTmpl; context: { project, i }"> </ng-container>
+        <ng-container *ngTemplateOutlet="SomeTmpl; context: { project, i, formGroup: bookBuilderForm.controls.projects.controls[i] }"> </ng-container>
       </ng-container>
     </div>
   </form>
@@ -11,31 +11,25 @@
 
 
 <!-- TEMPLATES -->
-<ng-template #SomeTmpl let-p="project" let-i="i">
-  <div class="projects__item">
+<ng-template #SomeTmpl let-p="project" let-i="i" let-formGroup="formGroup">
+  <div class="projects__item" [formGroup]="formGroup">
     <span>Проект - id: {{ p.project.id }}</span>
     <app-dropdown-multiselector 
-      [formControl]="bookBuilderForm.controls.projects.controls[i].controls.template"
+      [formControl]="formGroup.controls.template"
       optionLabel="template" 
       placeholder="serch template"
       (onFilterEvent)="onCustomFilterEvent($event)"
       [options]="(templatesSource$ | async)!"
       optionLabel="id"
-      optionValue="false"
       >
     </app-dropdown-multiselector>
-    <button (click)="buildProject(p.project.id)">Собрать</button>
-  
-    <div *ngIf="p.buildedProject">
-      Собранный проект: {{p.buildedProject}}
-    </div>
-  
-    <div *ngIf="p.error">
-      Ошибка: {{p.error}}
-    </div>
-
+    <button type="button" (click)="buildProject(formGroup)">Собрать</button>
+    <div *ngIf="formGroup.controls.buildedProject.value as value" >Собранный проект: {{value | json}}</div>
+    <div *ngIf="formGroup.controls.error.value as error" >Ошибка: {{error}}</div>
+    <!-- <div *ngIf="formGroup.invalid " >some templates error</div> -->
   </div>
 </ng-template>
+
 
 <ng-template #spinner>
   <span>LOADING...</span>
