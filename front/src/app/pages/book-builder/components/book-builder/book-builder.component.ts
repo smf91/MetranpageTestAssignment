@@ -119,7 +119,7 @@ export class BookBuilderComponent {
     });
   }
 
-  //TODO вынести из компонента
+  //TODO вынести из компонентаs
   private _preparedBuildProjectPayload(
     formGroup: FormGroup<BuildProjectControllers>
   ): BuildRequest {
